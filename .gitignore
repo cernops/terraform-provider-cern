@@ -1,0 +1,7 @@
+terraform-provider-cern
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+*.swp
+terraform.log
+.vscode
