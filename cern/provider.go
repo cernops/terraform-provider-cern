@@ -31,9 +31,17 @@ func Provider() terraform.ResourceProvider {
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("CERN_LANDB_PASSWORD", ""),
 			},
+			"teigi_endpoint": {
+				Type:        schema.TypeString,
+				Required:    false,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CERN_TEIGI_ENDPOINT", "https://woger.cern.ch:8201"),
+				Description: "Teigi API url that we can use",
+			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"cern_egroup": dataSourceCernEgroup(),
+			"cern_egroup":       dataSourceCernEgroup(),
+			"cern_teigi_secret": dataSourceTeigiSecret(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"cern_landb_vm":           landbVMResource(),
@@ -55,9 +63,18 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Teigi client
+	teigiClient, err := NewTeigiClient(d.Get("teigi_endpoint").(string))
+	if err != nil {
+		return nil, err
+	}
+
+	// Initialise Terraform provider configuration
 	config := &Config{
 		LdapServer:  d.Get("ldap_server").(string),
-		LandbClient: *landbClient,
+		LandbClient: landbClient,
+		TeigiClient: teigiClient,
 	}
 
 	return config, nil

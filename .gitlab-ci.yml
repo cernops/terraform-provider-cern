@@ -1,0 +1,38 @@
+---
+stages:
+- build
+- publish
+
+build:
+  stage: build
+  image: golang:latest
+  variables:
+    DEBIAN_FRONTEND: "noninteractive"
+  before_script:
+  - apt-get update && apt-get -y install libkrb5-dev
+  - git config --global url."https://$CI_REGISTRY_USER:$CI_JOB_TOKEN@gitlab.cern.ch/".insteadOf "https://gitlab.cern.ch/"
+  script:
+  - go build -o terraform-provider-cern
+  only:
+  - master
+  - tags
+  - merge_requests
+  artifacts:
+    expose_as: 'terraform-provider-cern'
+    paths:
+      - terraform-provider-cern
+
+publish:
+  stage: publish
+  image: golang:latest
+  variables:
+    DEBIAN_FRONTEND: "noninteractive"
+    S3_LATEST: "2.0.2"
+  before_script:
+  - apt-get update && apt-get -y install krb5-user libkrb5-dev zip python-dateutil
+  - curl -L http://downloads.sourceforge.net/project/s3tools/s3cmd/${S3_LATEST}/s3cmd-${S3_LATEST}.tar.gz | tar zxv -C .
+  script:
+  - zip terraform-provider-cern_${CI_COMMIT_REF_NAME}.zip terraform-provider-cern
+  - ./s3cmd-${S3_LATEST}/s3cmd --access_key=${S3_ACCESS_KEY} --secret_key=${S3_SECRET_KEY} --host=${S3_HOST} --host-bucket=%\(bucket\)s.${S3_HOST} --acl-private put terraform-provider-cern_${CI_COMMIT_REF_NAME}.zip "s3://$S3_CONTAINER/"
+  only:
+  - tags
