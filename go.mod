@@ -5,4 +5,5 @@ go 1.13
 require (
 	github.com/go-ldap/ldap v3.1.2+incompatible
 	github.com/hashicorp/terraform v0.12.21
+	github.com/tiaguinho/gosoap v1.4.3 // indirect
 )
