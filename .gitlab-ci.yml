@@ -9,6 +9,7 @@ build:
   variables:
     DEBIAN_FRONTEND: "noninteractive"
   before_script:
+  - apt-get update && apt-get -y install libkrb5-dev
   - git config --global url."https://$CI_REGISTRY_USER:$CI_JOB_TOKEN@gitlab.cern.ch/".insteadOf "https://gitlab.cern.ch/"
   script:
   - go build -o terraform-provider-cern
