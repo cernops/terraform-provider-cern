@@ -4,6 +4,7 @@
 
 Versioned binary releases are also available as follows:
 
+* [1.1.0](https://terraform-providers.s3.cern.ch/terraform-provider-cern_1.1.0.zip) (Release date: 10/02/2021).
 * [1.0.0](https://terraform-providers.s3.cern.ch/terraform-provider-cern_1.0.0.zip) (Release date: 11/12/2020).
 
 ## Provider configuration
