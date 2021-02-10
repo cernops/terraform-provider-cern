@@ -14,11 +14,27 @@ func dataSourceCernEgroup() *schema.Resource {
 		Read: dataSourceCernEgroupRead,
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Description: "Name of the e-group to query",
+				Required:    true,
+			},
+			"query_mails": {
+				Type:        schema.TypeBool,
+				Description: "Flag to specify whether 'mails' should be populated or not",
+				Optional:    true,
+				Default:     false,
 			},
 			"members": {
-				Type: schema.TypeList,
+				Type:        schema.TypeList,
+				Description: "List of usernames in the e-group",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Computed: true,
+			},
+			"mails": {
+				Type:        schema.TypeList,
+				Description: "List of e-mail addresses of the members of the group",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -28,13 +44,36 @@ func dataSourceCernEgroup() *schema.Resource {
 	}
 }
 
-func Find(slice []string, val string) (int, bool) {
+func find(slice []string, val string) (int, bool) {
 	for i, item := range slice {
 		if item == val {
 			return i, true
 		}
 	}
 	return -1, false
+}
+
+func getMail(usernames []string, conn *ldap.Conn) []string {
+	base := "OU=Users,OU=Organic Units,DC=cern,DC=ch"
+	scope := ldap.ScopeWholeSubtree
+	attr := "mail"
+
+	var mails []string
+	for _, user := range usernames {
+		searchRequest := ldap.NewSearchRequest(
+			base, scope, ldap.NeverDerefAliases, 0, 0, false,
+			fmt.Sprintf("(CN=%s)", user),
+			[]string{attr},
+			nil,
+		)
+		sr, err := conn.Search(searchRequest)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		mails = append(mails, sr.Entries[0].GetAttributeValues(attr)[0])
+	}
+	return mails
 }
 
 func egroup2users(egroups []string, conn *ldap.Conn, recursion bool, processed []string) ([]string, []string) {
@@ -45,7 +84,7 @@ func egroup2users(egroups []string, conn *ldap.Conn, recursion bool, processed [
 	var users []string
 
 	for _, egroup := range egroups {
-		_, found := Find(processed, egroup)
+		_, found := find(processed, egroup)
 		if found {
 			continue
 		}
@@ -94,8 +133,16 @@ func dataSourceCernEgroupRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.SetId(d.Get("name").(string))
 
+	queryMails := d.Get("query_mails").(bool)
+
 	users, _ := egroup2users([]string{d.Get("name").(string)}, l, true, []string{})
 	d.Set("members", users)
+
+	if queryMails {
+		d.Set("mails", getMail(users, l))
+	} else {
+		d.Set("mails", []string{})
+	}
 
 	return nil
 }

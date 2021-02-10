@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `cern_egroup_members` adds a `mails` attribute to fetch the list of e-mail addresses associated with the users in the e-group. The flag `query_mails` controls whether this information should be fetched or not.
+
 ## [1.0.0] - 2020-12-11
 
 ### Added
