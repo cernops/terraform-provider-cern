@@ -122,7 +122,7 @@ func egroup2users(egroups []string, conn *ldap.Conn, recursion bool, processed [
 }
 
 func dataSourceCernEgroupRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*config)
 
 	l, err := ldap.DialURL(config.LdapServer)
 	if err != nil {

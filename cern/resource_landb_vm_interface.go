@@ -51,7 +51,11 @@ func landbVMInterfaceResource() *schema.Resource {
 }
 
 func landbVMInterfaceResourceCreate(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
+
 	vmInterfaceOptions := d.Get("vm_interface_options").(map[string]interface{})
 	interfaceName := strings.ToUpper(fmt.Sprintf("%s.%s", d.Get("vm_name").(string), d.Get("interface_domain").(string)))
 
@@ -79,7 +83,11 @@ func landbVMInterfaceResourceCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func landbVMInterfaceResourceDelete(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
+
 	interfaceName := strings.ToUpper(fmt.Sprintf("%s.%s", d.Get("vm_name").(string), d.Get("interface_domain").(string)))
 	done, err := landbClient.VMRemoveInterface(context.TODO(), d.Get("vm_name").(string), interfaceName)
 	if err != nil || !done {

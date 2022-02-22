@@ -92,7 +92,10 @@ func landbVMResource() *schema.Resource {
 }
 
 func landbVMResourceCreate(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
 	operatingSystem := d.Get("operating_system").(map[string]interface{})
 	location := d.Get("location").(map[string]interface{})
 	responsible := d.Get("responsible_person").(map[string]interface{})
@@ -159,7 +162,11 @@ func landbVMResourceRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func landbVMResourceDelete(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
+
 	done, err := landbClient.VMDestroy(context.TODO(), d.Get("device_name").(string))
 	if err != nil || !done {
 		return fmt.Errorf("error deleting VM %s: %s", d.Get("device_name").(string), err)

@@ -43,7 +43,10 @@ func landbVMCardResource() *schema.Resource {
 }
 
 func landbVMCardResourceCreate(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
 
 	interfaceCard := InterfaceCard{
 		HardwareAddress: d.Get("hardware_address").(string),
@@ -59,7 +62,11 @@ func landbVMCardResourceCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func landbVMCardResourceDelete(d *schema.ResourceData, meta interface{}) error {
-	landbClient := meta.(*Config).LandbClient
+	landbClient, err := meta.(CernConfig).GetLandbClient()
+	if err != nil {
+		return err
+	}
+
 	done, err := landbClient.VMRemoveCard(context.TODO(), d.Get("vm_name").(string), d.Get("hardware_address").(string))
 	if err != nil || !done {
 		return fmt.Errorf(

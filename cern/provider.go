@@ -53,17 +53,6 @@ func Provider() terraform.ResourceProvider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	// This LanDB client is initialised with a token that should be valid for
-	// a few hours. A renovation mechanism has not been implemented yet.
-	landbClient, err := NewLandbClient(
-		d.Get("landb_endpoint").(string),
-		d.Get("landb_username").(string),
-		d.Get("landb_password").(string),
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	// Teigi client
 	teigiClient, err := NewTeigiClient(d.Get("teigi_endpoint").(string))
 	if err != nil {
@@ -71,10 +60,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	// Initialise Terraform provider configuration
-	config := &Config{
-		LdapServer:  d.Get("ldap_server").(string),
-		LandbClient: landbClient,
-		TeigiClient: teigiClient,
+	config := &config{
+		LdapServer:    d.Get("ldap_server").(string),
+		LandbEndpoint: d.Get("landb_endpoint").(string),
+		LandbUsername: d.Get("landb_username").(string),
+		LandbPassword: d.Get("landb_password").(string),
+		TeigiClient:   teigiClient,
 	}
 
 	return config, nil
