@@ -1,11 +1,15 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform/plugin"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 	"gitlab.cern.ch/batch-team/infra/terraform-provider-cern/cern"
 )
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: cern.Provider})
+		ProviderFunc: func() *schema.Provider {
+			return cern.Provider()
+		},
+	})
 }
