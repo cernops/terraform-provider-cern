@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Refactored landb to not require credentials when the provider is initialised
+- Updated to terraform-plugin-sdk/v2 libraries
 ### Removed
 
 ## [1.1.0] - 2021-02-10
