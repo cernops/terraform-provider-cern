@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/go-ldap/ldap"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceCernEgroup() *schema.Resource {
@@ -122,7 +122,7 @@ func egroup2users(egroups []string, conn *ldap.Conn, recursion bool, processed [
 }
 
 func dataSourceCernEgroupRead(d *schema.ResourceData, meta interface{}) error {
-	config := meta.(*Config)
+	config := meta.(*config)
 
 	l, err := ldap.DialURL(config.LdapServer)
 	if err != nil {

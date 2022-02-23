@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func dataSourceTeigiSecret() *schema.Resource {
@@ -35,7 +35,7 @@ func dataSourceTeigiSecret() *schema.Resource {
 }
 
 func teigiSecretDataSourceRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Config).TeigiClient
+	client := meta.(*config).TeigiClient
 
 	hostgroup := d.Get("hostgroup").(string)
 	key := d.Get("key").(string)
