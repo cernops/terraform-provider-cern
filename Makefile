@@ -1,16 +1,19 @@
-GO=go
-OUT=terraform-provider-cern
+BIN          = terraform-provider-cern
+GOFMT_FILES ?= $$(find . -name '*.go')
+GO_ARGS     ?=
 
-TEST?=$$(go list .)
-GOFMT_FILES?=$$(find . -name '*.go')
+all: build
 
-default: build
+$(BIN): cern main.go go.mod go.sum
+	go build $(GO_ARGS) -o $@
 
-build:
-	$(ENV) $(GO) build -o $(OUT)
 
 fmt:
 	gofmt -s -w $(GOFMT_FILES)
 
-debug:
-	$(ENV) $(GO) build -gcflags=all="-N -l" -o $(OUT)
+build: $(BIN)
+
+debug: GO_ARGS += -gcflags=all="-N -l"
+debug: $(BIN)
+
+.PHONY: all build fmt debug
