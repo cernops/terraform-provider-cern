@@ -12,6 +12,7 @@ type config struct {
 	LandbPassword string
 	TeigiClient   *Teigi
 	RogerClient   *Roger
+	CertMgrClient *CertMgr
 }
 
 func (c config) GetLandbClient() (*LandbClient, error) {

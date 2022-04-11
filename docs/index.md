@@ -17,6 +17,7 @@ description: |-
 
 ### Optional
 
+- `certmgr_endpoint` (String) Certmgr API url that we can use
 - `landb_endpoint` (String)
 - `landb_password` (String, Sensitive)
 - `landb_username` (String)

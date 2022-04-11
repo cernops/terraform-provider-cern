@@ -37,6 +37,13 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("CERN_TEIGI_ENDPOINT", "https://woger.cern.ch:8201"),
 				Description: "Teigi API url that we can use",
 			},
+			"certmgr_endpoint": {
+				Type:        schema.TypeString,
+				Required:    false,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("CERN_TEIGI_ENDPOINT", "https://hector.cern.ch:8008"),
+				Description: "Certmgr API url that we can use",
+			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"cern_egroup":       dataSourceCernEgroup(),
@@ -47,6 +54,7 @@ func Provider() *schema.Provider {
 			"cern_landb_vm_card":      landbVMCardResource(),
 			"cern_landb_vm_interface": landbVMInterfaceResource(),
 			"cern_roger":              rogerResource(),
+			"cern_certmgr":            certMgrResource(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
@@ -55,6 +63,11 @@ func Provider() *schema.Provider {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	// Teigi client
 	teigiClient, err := NewTeigiClient(d.Get("teigi_endpoint").(string))
+	if err != nil {
+		return nil, err
+	}
+	// CertMgr client
+	certMgrClient, err := NewCertMgrClient(d.Get("certmgr_endpoint").(string))
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +86,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		LandbPassword: d.Get("landb_password").(string),
 		TeigiClient:   teigiClient,
 		RogerClient:   rogerClient,
+		CertMgrClient: certMgrClient,
 	}
 
 	return config, nil
