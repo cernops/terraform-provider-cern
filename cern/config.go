@@ -11,6 +11,7 @@ type config struct {
 	LandbUsername string
 	LandbPassword string
 	TeigiClient   *Teigi
+	RogerClient   *Roger
 }
 
 func (c config) GetLandbClient() (*LandbClient, error) {

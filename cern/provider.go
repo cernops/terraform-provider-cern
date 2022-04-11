@@ -46,6 +46,7 @@ func Provider() *schema.Provider {
 			"cern_landb_vm":           landbVMResource(),
 			"cern_landb_vm_card":      landbVMCardResource(),
 			"cern_landb_vm_interface": landbVMInterfaceResource(),
+			"cern_roger":              rogerResource(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
@@ -58,6 +59,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		return nil, err
 	}
 
+	// Roger client
+	rogerClient, err := NewRogerClient(d.Get("teigi_endpoint").(string))
+	if err != nil {
+		return nil, err
+	}
+
 	// Initialise Terraform provider configuration
 	config := &config{
 		LdapServer:    d.Get("ldap_server").(string),
@@ -65,6 +72,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		LandbUsername: d.Get("landb_username").(string),
 		LandbPassword: d.Get("landb_password").(string),
 		TeigiClient:   teigiClient,
+		RogerClient:   rogerClient,
 	}
 
 	return config, nil
