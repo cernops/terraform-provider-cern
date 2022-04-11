@@ -34,12 +34,29 @@ secret_detection:
   stage: security
   needs: []
 
-lint:
+golang-lint:
   stage: qa
   needs: []
   image: golangci/golangci-lint:v1.45
   script:
     - golangci-lint run -v
+
+test-go-generate:
+  stage: qa
+  needs: []
+  image: golang:1.17
+  variables:
+    TERRAFORM_VERSION: 1.1.8
+  script:
+    - apt-get update && apt-get install zip -y
+    - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+    - unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin
+    - go generate
+    - | 
+      git diff --compact-summary --exit-code ||
+        (echo;
+         echo "Unexpected difference in directories after code generation. Run 'go generate' command and commit.";
+         exit 1)
 
 code_navigation:
   stage: misc

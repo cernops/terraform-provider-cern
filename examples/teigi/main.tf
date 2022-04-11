@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     cern = {
-      source = "gitlab.cern.ch/batch-team/cern"
+      source  = "gitlab.cern.ch/batch-team/cern"
       version = "1.0.0"
     }
   }
@@ -13,5 +13,5 @@ data "cern_teigi_secret" "oops" {
 }
 
 output "secret" {
-    value = data.cern_teigi_secret.oops.secret
+  value = data.cern_teigi_secret.oops.secret
 }

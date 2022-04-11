@@ -7,8 +7,8 @@ all: build
 $(BIN): cern main.go go.mod go.sum
 	go build $(GO_ARGS) -o $@
 
-
 fmt:
+	go generate
 	gofmt -s -w $(GOFMT_FILES)
 
 build: $(BIN)
