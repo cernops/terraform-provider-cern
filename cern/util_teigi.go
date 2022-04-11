@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"gitlab.cern.ch/batch-team/negotiate"
+	"github.com/dpotapov/go-spnego"
 )
 
 // Secret defines the Teigi response structure
@@ -48,7 +48,9 @@ func NewTeigiClient(endpoint string) (*Teigi, error) {
 
 // Get request
 func (t Teigi) Get(hostgroup string, key string) (*Secret, string, error) {
-	client := http.Client{}
+	client := http.Client{
+		Transport: &spnego.Transport{},
+	}
 
 	url := fmt.Sprintf("%s/tbag/v2/hostgroup/%s/secret/%s/", t.URL, strings.ReplaceAll(hostgroup, "/", "-"), key)
 	log.Printf("[DEBUG] Request url constructed as follows: %s", url)
@@ -56,12 +58,6 @@ func (t Teigi) Get(hostgroup string, key string) (*Secret, string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, "Failed to create an http request", err
-	}
-
-	// Decorate the request with Kerberos credentials
-	err = negotiate.Negotiate(req)
-	if err != nil {
-		return nil, "Teigi request requires authorization", err
 	}
 
 	resp, err := client.Do(req)
