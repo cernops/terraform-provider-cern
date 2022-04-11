@@ -47,7 +47,9 @@ func teigiSecretDataSourceRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(key)
-	d.Set("secret", secret.Secret)
+	if err := d.Set("secret", secret.Secret); err != nil {
+		return fmt.Errorf("Unable to set secret: %s", err)
+	}
 
 	return nil
 }

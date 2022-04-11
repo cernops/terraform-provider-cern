@@ -136,12 +136,18 @@ func dataSourceCernEgroupRead(d *schema.ResourceData, meta interface{}) error {
 	queryMails := d.Get("query_mails").(bool)
 
 	users, _ := egroup2users([]string{d.Get("name").(string)}, l, true, []string{})
-	d.Set("members", users)
+	if err := d.Set("members", users); err != nil {
+		return fmt.Errorf("Unable to set members: %s", err)
+	}
+
+	mails := []string{}
 
 	if queryMails {
-		d.Set("mails", getMail(users, l))
-	} else {
-		d.Set("mails", []string{})
+		mails = getMail(users, l)
+	}
+
+	if err := d.Set("mails", mails); err != nil {
+		return fmt.Errorf("Unable to set mails: %s", err)
 	}
 
 	return nil
