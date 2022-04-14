@@ -1,10 +1,13 @@
 package cern
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -12,11 +15,16 @@ import (
 	"github.com/dpotapov/go-spnego"
 )
 
-// Secret defines the Teigi response structure
-type Secret struct {
-	Encoding      string `json:"encoding"`
+// SecretRequest defines the Teigi request structure
+type SecretRequest struct {
+	Secret   string `json:"secret"`
+	Encoding string `json:"encoding,omitempty"`
+}
+
+// SecretResponse defines the Teigi response structure
+type SecretResponse struct {
+	SecretRequest
 	Hostgroup     string `json:"hostgroup"`
-	Secret        string `json:"secret"`
 	Skey          string `json:"skey"`
 	UpdateTime    string `json:"update_time"`
 	UpdateTimeStr string `json:"update_time_str"`
@@ -46,35 +54,89 @@ func NewTeigiClient(endpoint string) (*Teigi, error) {
 	}, nil
 }
 
+func fqndify(host string) (string, error) {
+	fqdn := host
+	if strings.ContainsAny(fqdn, ".") {
+		fqdn = host + ".cern.ch"
+	}
+
+	addrs, err := net.LookupHost(fqdn)
+	if err != nil {
+		return "", err
+	}
+
+	if len(addrs) == 0 {
+		return "", fmt.Errorf("fqdn '%s' does not resolve", fqdn)
+	} else if len(addrs) > 2 {
+		return "", fmt.Errorf("fqdn '%s' may be an alias", fqdn)
+	}
+
+	return fqdn, nil
+}
+
+func (t Teigi) Create(ctx context.Context, scope string, entity, key string, secretRequest SecretRequest) error {
+	_, err := t.do(ctx, "POST", scope, entity, key, secretRequest)
+	return err
+}
+
+func (t Teigi) Delete(ctx context.Context, scope string, entity, key string) error {
+	_, err := t.do(ctx, "DELETE", scope, entity, key, SecretRequest{})
+	return err
+}
+
+func (t Teigi) Get(ctx context.Context, scope string, entity, key string) (*SecretResponse, error) {
+	return t.do(ctx, "GET", scope, entity, key, SecretRequest{})
+}
+
 // Get request
-func (t Teigi) Get(hostgroup string, key string) (*Secret, string, error) {
+func (t Teigi) do(ctx context.Context, method string, scope string, entity string, key string, secretRequest SecretRequest) (*SecretResponse, error) {
+	var err error
 	client := http.Client{
 		Transport: &spnego.Transport{},
 	}
 
-	url := fmt.Sprintf("%s/tbag/v2/hostgroup/%s/secret/%s/", t.URL, strings.ReplaceAll(hostgroup, "/", "-"), key)
+	if scope == "host" {
+		entity, err = fqndify(entity)
+		if err != nil {
+			return nil, err
+		}
+	} else if scope == "hostgroup" {
+		entity = strings.Trim(entity, "/")
+		entity = strings.ReplaceAll(entity, "/", "-")
+	}
+
+	url := fmt.Sprintf("%s/tbag/v2/%s/%s/secret/%s/", t.URL, scope, entity, key)
 	log.Printf("[DEBUG] Request url constructed as follows: %s", url)
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, "Failed to create an http request", err
+	var requestData []byte
+	if method == "POST" {
+		requestData, _ = json.Marshal(secretRequest)
 	}
+
+	req, err := http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(requestData))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Encoding", "deflate")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, "Failed to do an http Get", err
+		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, "Failed to read the body of the response", err
+		return nil, err
 	}
 
-	secret := new(Secret)
-	err = json.Unmarshal(body, &secret)
-	if err != nil {
-		return nil, "Failed to unmarshal response body. Check that the Teigi key is valid", err
+	var secretResponse SecretResponse
+	if method == "GET" {
+		err = json.Unmarshal(body, &secretResponse)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return secret, "Success", nil
+	return &secretResponse, nil
 }

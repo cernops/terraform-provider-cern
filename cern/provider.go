@@ -55,6 +55,7 @@ func Provider() *schema.Provider {
 			"cern_landb_vm_interface": landbVMInterfaceResource(),
 			"cern_roger":              rogerResource(),
 			"cern_certmgr":            certMgrResource(),
+			"cern_teigi_secret":       resourceTeigiSecret(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
