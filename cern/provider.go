@@ -34,7 +34,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Required:    false,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CERN_TEIGI_ENDPOINT", "https://woger.cern.ch:8201"),
+				DefaultFunc: schema.EnvDefaultFunc("CERN_TEIGI_ENDPOINT", "https://woger-direct.cern.ch:8201"),
 				Description: "Teigi API url that we can use",
 			},
 			"certmgr_endpoint": {
