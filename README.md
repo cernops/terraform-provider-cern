@@ -1,13 +1,5 @@
 # Terraform CERN provider
 
-## Releases
-
-Versioned binary releases are also available as follows:
-
-* [2.0.0](https://terraform-providers.s3.cern.ch/terraform-provider-cern_2.0.0.zip) (Release date: 23/02/2022).
-* [1.1.0](https://terraform-providers.s3.cern.ch/terraform-provider-cern_1.1.0.zip) (Release date: 10/02/2021).
-* [1.0.0](https://terraform-providers.s3.cern.ch/terraform-provider-cern_1.0.0.zip) (Release date: 11/12/2020).
-
 ## Provider configuration
 
 The provider configuration block accepts the following arguments:

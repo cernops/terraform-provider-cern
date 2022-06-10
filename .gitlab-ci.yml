@@ -83,18 +83,3 @@ release:
   script:
     - gpg --import < $GPG_PRIV_KEY_FILE
     - goreleaser release --rm-dist
-
-publish:
-  stage: release
-  image: golang:1.13
-  variables:
-    DEBIAN_FRONTEND: "noninteractive"
-    S3_LATEST: "2.0.2"
-  before_script:
-    - apt-get update && apt-get -y install krb5-user libkrb5-dev zip python-dateutil
-    - curl -L http://downloads.sourceforge.net/project/s3tools/s3cmd/${S3_LATEST}/s3cmd-${S3_LATEST}.tar.gz | tar zxv -C .
-  script:
-    - zip terraform-provider-cern_${CI_COMMIT_REF_NAME}.zip terraform-provider-cern
-    - ./s3cmd-${S3_LATEST}/s3cmd --access_key=${S3_ACCESS_KEY} --secret_key=${S3_SECRET_KEY} --host=${S3_HOST} --host-bucket=%\(bucket\)s.${S3_HOST} --acl-private put terraform-provider-cern_${CI_COMMIT_REF_NAME}.zip "s3://$S3_CONTAINER/"
-  only:
-    - tags
