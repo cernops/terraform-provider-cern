@@ -72,7 +72,7 @@ code_navigation:
 release:
   stage: release
   image:
-    name: goreleaser/goreleaser:v1.7.0
+    name: goreleaser/goreleaser:v1.9.2
     entrypoint: ['']
   only:
     - tags
@@ -80,6 +80,8 @@ release:
     # Disable shallow cloning so that goreleaser can diff between tags to
     # generate a changelog.
     GIT_DEPTH: 0
+  before_script:
+    - apk add gpg-agent
+    - gpg --import < $GPG_PRIVATE_KEY_FILE
   script:
-    - gpg --import < $GPG_PRIV_KEY_FILE
     - goreleaser release --rm-dist
