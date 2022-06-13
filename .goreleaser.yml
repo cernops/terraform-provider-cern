@@ -52,3 +52,6 @@ release:
 changelog:
   skip: false
   sort: asc
+gitlab_urls:
+  api: https://gitlab.cern.ch/api/v4/
+  download: https://gitlab.cern.ch
