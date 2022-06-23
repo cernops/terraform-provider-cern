@@ -89,7 +89,7 @@ func dataSourceTeigiSecretRead(ctx context.Context, d *schema.ResourceData, meta
 
 	scope, entity, err := getScopeAndEntity(d)
 	if err != nil {
-		diag.Errorf("Error getting scope and entity: %s", err)
+		return diag.Errorf("Error getting scope and entity: %s", err)
 	}
 
 	key := d.Get("key").(string)
