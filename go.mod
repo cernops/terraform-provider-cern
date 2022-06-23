@@ -1,4 +1,4 @@
-module gitlab.cern.ch/batch-team/infra/terraform-provider-cern
+module gitlab.cern.ch/ceph/terraform/terraform-provider-cern
 
 go 1.17
 

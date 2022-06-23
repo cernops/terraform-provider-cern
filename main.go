@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-	"gitlab.cern.ch/batch-team/infra/terraform-provider-cern/cern"
+	"gitlab.cern.ch/ceph/terraform/terraform-provider-cern/cern"
 )
 
 //go:generate terraform fmt -recursive ./examples/
