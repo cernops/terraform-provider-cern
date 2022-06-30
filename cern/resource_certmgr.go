@@ -72,6 +72,9 @@ func resourceCertMgrCreate(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func resourceCertMgrRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if err := d.Set("hostname", d.Id()); err != nil {
+		return diag.Errorf("Unable to set hostname: %s", err)
+	}
 	return nil
 }
 
