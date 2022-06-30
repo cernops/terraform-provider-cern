@@ -126,7 +126,7 @@ func resourceRogerCreate(ctx context.Context, d *schema.ResourceData, meta inter
 
 func resourceRogerRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*config).RogerClient
-	hostname := d.Get("hostname").(string)
+	hostname := d.Id()
 	log.Printf("[DEBUG] Creating roger read request for %s", hostname)
 	resp, err := client.Get(ctx, hostname)
 	if err != nil {
