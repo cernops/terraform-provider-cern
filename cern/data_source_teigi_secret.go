@@ -65,7 +65,7 @@ func getScopeAndEntity(d *schema.ResourceData) (string, string, error) {
 	var entity string
 
 	hostgroup := d.Get("hostgroup").(string)
-	host := d.Get("hostgroup").(string)
+	host := d.Get("host").(string)
 	service := d.Get("service").(string)
 
 	if hostgroup != "" {

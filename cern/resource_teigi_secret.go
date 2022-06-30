@@ -124,6 +124,13 @@ func resourceTeigiSecretRead(ctx context.Context, d *schema.ResourceData, meta i
 		return diag.Errorf("Unable to get secret: %s", err)
 	}
 
+	if err := d.Set(scope, entity); err != nil {
+		return diag.Errorf("Unable to set '%s': %s", scope, err)
+	}
+	if err := d.Set("key", key); err != nil {
+		return diag.Errorf("Unable to set key: %s", err)
+	}
+
 	if err := d.Set("secret", secretResponse.Secret); err != nil {
 		return diag.Errorf("Unable to set secret: %s", err)
 	}
