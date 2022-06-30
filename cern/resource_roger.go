@@ -133,6 +133,9 @@ func resourceRogerRead(ctx context.Context, d *schema.ResourceData, meta interfa
 		return diag.Errorf("Error reading roger state: %s", err)
 	}
 
+	if err := d.Set("hostname", hostname); err != nil {
+		return diag.Errorf("Unable to set hostname: %s", err)
+	}
 	if err := d.Set("appstate", resp.AppState); err != nil {
 		return diag.Errorf("Error setting appstate: %s", err)
 	}
