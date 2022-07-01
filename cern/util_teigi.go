@@ -130,7 +130,7 @@ func (t Teigi) do(ctx context.Context, method string, scope string, entity strin
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+	if resp.StatusCode < 200 && resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("non 2xx error code (%d)", resp.StatusCode)
 	}
 
