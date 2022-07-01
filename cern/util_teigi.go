@@ -31,6 +31,11 @@ type SecretResponse struct {
 	UpdatedBy     string `json:"updated_by"`
 }
 
+func SerializeHostgroup(hostgroup string) string {
+	hostgroup = strings.Trim(hostgroup, "/")
+	return strings.ReplaceAll(hostgroup, "/", "-")
+}
+
 // Teigi client manages requests to the Teigi service
 type Teigi struct {
 	URL *url.URL
@@ -101,8 +106,7 @@ func (t Teigi) do(ctx context.Context, method string, scope string, entity strin
 			return nil, err
 		}
 	} else if scope == "hostgroup" {
-		entity = strings.Trim(entity, "/")
-		entity = strings.ReplaceAll(entity, "/", "-")
+		entity = SerializeHostgroup(entity)
 	}
 
 	url := fmt.Sprintf("%s/tbag/v2/%s/%s/secret/%s/", t.URL, scope, entity, key)

@@ -38,6 +38,9 @@ func resourceTeigiSecret() *schema.Resource {
 				Optional:      true,
 				Description:   "Hostgroup where the secret is located",
 				ConflictsWith: []string{"host", "service"},
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return SerializeHostgroup(old) == SerializeHostgroup(new)
+				},
 			},
 
 			"service": {
@@ -104,8 +107,6 @@ func resourceTeigiSecretCreate(ctx context.Context, d *schema.ResourceData, meta
 	if err != nil {
 		return diag.Errorf("Unable to create secret: %s", err)
 	}
-
-	d.SetId(scope + "/" + entity + "/" + key)
 
 	return resourceTeigiSecretRead(ctx, d, meta)
 }

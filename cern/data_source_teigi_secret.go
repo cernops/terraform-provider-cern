@@ -70,7 +70,7 @@ func getScopeAndEntity(d *schema.ResourceData) (string, string, error) {
 
 	if hostgroup != "" {
 		scope = "hostgroup"
-		entity = hostgroup
+		entity = SerializeHostgroup(hostgroup)
 	} else if host != "" {
 		scope = "host"
 		entity = host
