@@ -128,6 +128,11 @@ func (t Teigi) do(ctx context.Context, method string, scope string, entity strin
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return nil, fmt.Errorf("non 2xx error code (%d)", resp.StatusCode)
+	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

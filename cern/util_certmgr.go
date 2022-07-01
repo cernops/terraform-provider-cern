@@ -72,6 +72,10 @@ func (c CertMgr) Do(ctx context.Context, hostname string) (*CertMgrResponse, err
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return nil, fmt.Errorf("non 2xx error code (%d)", resp.StatusCode)
+	}
+
 	var certMgrResponse CertMgrResponse
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
