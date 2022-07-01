@@ -108,6 +108,7 @@ func resourceTeigiSecretCreate(ctx context.Context, d *schema.ResourceData, meta
 		return diag.Errorf("Unable to create secret: %s", err)
 	}
 
+	d.SetId(scope + "/" + entity + "/" + key)
 	return resourceTeigiSecretRead(ctx, d, meta)
 }
 
