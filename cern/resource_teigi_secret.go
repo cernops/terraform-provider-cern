@@ -78,7 +78,7 @@ func resourceTeigiSecret() *schema.Resource {
 
 func parseTeigiSecretID(id string) (string, string, string, error) {
 	idParts := strings.Split(id, "/")
-	if len(idParts) < 2 {
+	if len(idParts) < 3 {
 		return "", "", "", fmt.Errorf("Unable to determine teigi secret ID %s", id)
 	}
 
