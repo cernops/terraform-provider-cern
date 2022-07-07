@@ -93,6 +93,7 @@ func resourceRogerCreate(ctx context.Context, d *schema.ResourceData, meta inter
 
 	request := RogerRequest{
 		Hostname: d.Get("hostname").(string),
+		AppState: d.Get("appstate").(string),
 		Expires:  d.Get("expires").(string),
 		Message:  d.Get("message").(string),
 	}
@@ -178,6 +179,7 @@ func resourceRogerUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 
 	request := RogerRequest{
 		Hostname: d.Get("hostname").(string),
+		AppState: d.Get("appstate").(string),
 		Expires:  d.Get("expires").(string),
 		Message:  d.Get("message").(string),
 	}
