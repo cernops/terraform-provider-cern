@@ -91,13 +91,13 @@ func (r Roger) do(ctx context.Context, rogerRequest RogerRequest, method string)
 	}
 
 	url := fmt.Sprintf("%s/roger/v1/state/%s/", r.URL, rogerRequest.Hostname)
-	if method == "POST" {
+	if method == "POST" || method == "PUT" {
 		url = fmt.Sprintf("%s/roger/v1/state/", r.URL)
 	}
 	log.Printf("[DEBUG] Request url constructed as follows: %s", url)
 
 	var requestData []byte
-	if method != "GET" && method != "DELETE" {
+	if method != "GET" && method != "DELETE" && method != "PUT" {
 		requestData, _ = json.Marshal(rogerRequest)
 	}
 
@@ -122,7 +122,7 @@ func (r Roger) do(ctx context.Context, rogerRequest RogerRequest, method string)
 	if err != nil {
 		return nil, err
 	}
-	if method != "POST" && method != "DELETE" {
+	if method != "POST" && method != "DELETE" && method != "PUT" {
 		err = json.Unmarshal(body, &rogerResponse)
 		if err != nil {
 			return nil, err
