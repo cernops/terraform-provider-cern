@@ -71,8 +71,9 @@ func (r Roger) Create(ctx context.Context, rogerRequest RogerRequest) error {
 }
 
 // Update a roger state
-func (r Roger) Update(ctx context.Context, rogerRequest RogerRequest) (*RogerResponse, error) {
-	return r.do(ctx, rogerRequest, "PUT")
+func (r Roger) Update(ctx context.Context, rogerRequest RogerRequest) error {
+	_, err := r.do(ctx, rogerRequest, "PUT")
+	return err
 }
 
 // Update a roger state

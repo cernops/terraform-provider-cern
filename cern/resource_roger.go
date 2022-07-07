@@ -199,7 +199,7 @@ func resourceRogerUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	log.Printf("[DEBUG] Creating roger update request for %s", request.Hostname)
-	_, err := client.Update(ctx, request)
+	err := client.Update(ctx, request)
 	if err != nil {
 		return diag.Errorf("Error updating roger state: %s", err)
 	}
