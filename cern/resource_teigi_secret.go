@@ -123,7 +123,7 @@ func resourceTeigiSecretRead(ctx context.Context, d *schema.ResourceData, meta i
 		scope, entity, key)
 	secretResponse, err := client.Get(ctx, scope, entity, key)
 	if err != nil {
-		return diag.Errorf("Unable to get secret: %s", err)
+		return diag.FromErr(CheckDeleted(d, "Unable to get secret", err))
 	}
 
 	if err := d.Set(scope, entity); err != nil {
@@ -160,7 +160,7 @@ func resourceTeigiSecretDelete(ctx context.Context, d *schema.ResourceData, meta
 		scope, entity, key)
 	err = client.Delete(ctx, scope, entity, key)
 	if err != nil {
-		return diag.Errorf("Unable to delete secret: %s", err)
+		return diag.FromErr(CheckDeleted(d, "Unable to delete secret", err))
 	}
 
 	return nil

@@ -131,7 +131,7 @@ func resourceRogerRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	log.Printf("[DEBUG] Creating roger read request for %s", hostname)
 	resp, err := client.Get(ctx, hostname)
 	if err != nil {
-		return diag.Errorf("Error reading roger state: %s", err)
+		return diag.FromErr(CheckDeleted(d, "Error reading roger state", err))
 	}
 
 	if err := d.Set("hostname", hostname); err != nil {
@@ -216,7 +216,7 @@ func resourceRogerDelete(ctx context.Context, d *schema.ResourceData, meta inter
 	log.Printf("[DEBUG] Creating roger delete request for %s", hostname)
 	_, err := client.Delete(ctx, hostname)
 	if err != nil {
-		return diag.Errorf("Error deleting roger state: %s", err)
+		return diag.FromErr(CheckDeleted(d, "Error deleting roger state", err))
 	}
 
 	return nil

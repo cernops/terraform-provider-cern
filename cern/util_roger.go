@@ -123,6 +123,11 @@ func (r Roger) do(ctx context.Context, rogerRequest RogerRequest, method string)
 	if err != nil {
 		return nil, err
 	}
+
+	if resp.StatusCode < 200 && resp.StatusCode >= 300 {
+		return nil, HTTPError{url, resp.StatusCode, string(body[:])}
+	}
+
 	if method != "POST" && method != "DELETE" && method != "PUT" {
 		err = json.Unmarshal(body, &rogerResponse)
 		if err != nil {
