@@ -97,7 +97,7 @@ func (r Roger) do(ctx context.Context, rogerRequest RogerRequest, method string)
 	log.Printf("[DEBUG] Request url constructed as follows: %s", url)
 
 	var requestData []byte
-	if method != "GET" && method != "DELETE" && method != "PUT" {
+	if method != "GET" && method != "DELETE" {
 		requestData, _ = json.Marshal(rogerRequest)
 		log.Printf("[DEBUG] Request data: %s", string(requestData[:]))
 	}
