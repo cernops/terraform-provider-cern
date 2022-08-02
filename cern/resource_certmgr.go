@@ -24,6 +24,13 @@ func certMgrResource() *schema.Resource {
 				ForceNew:    true,
 				Description: "Hostname to stage the certificate",
 			},
+			"vm_tag": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Description: "This is a workaround to stage a " +
+					"new certificate whenever the associated server is recreated/rebuilt.",
+			},
 			"id_cert": {
 				Type:     schema.TypeInt,
 				Computed: true,

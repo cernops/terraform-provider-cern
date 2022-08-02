@@ -22,6 +22,7 @@ description: |-
 ### Optional
 
 - `id` (String) The ID of this resource.
+- `vm_tag` (String) This is a workaround to stage a new certificate whenever the associated server is recreated/rebuilt.
 
 ### Read-Only
 
